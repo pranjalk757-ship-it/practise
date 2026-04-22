@@ -1,0 +1,42 @@
+from lark import Lark, UnexpectedInput
+
+grammar = r"""
+start: assignment+
+assignment: IDENTIFIER "=" NUMBER ";"
+
+IDENTIFIER: /[a-zA-Z_]\w*/
+NUMBER: /\d+/
+
+%ignore WS
+WS: /[ \t\n]+/
+"""
+
+parser = Lark(grammar)
+
+data = "x = 10 y = 20;"  # error
+
+try:
+    parser.parse(data)
+except UnexpectedInput as e:
+    print("Error at line", e.line, "column", e.column)
+
+
+
+
+
+
+
+
+import re
+
+data = "x = 10 y = 20;"
+
+statements = data.split(";")
+
+for stmt in statements:
+    stmt = stmt.strip()
+    if stmt:
+        if not re.match(r"[a-zA-Z_]\w*\s*=\s*\d+$", stmt):
+            print("Syntax Error in:", stmt)
+        else:
+            print("Valid:", stmt)
