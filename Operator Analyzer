@@ -1,0 +1,62 @@
+import re
+
+# Define valid operators (based on common programming languages like C/Python)
+VALID_OPERATORS = {
+    '+', '-', '*', '/', '%',
+    '++', '--',
+    '==', '!=', '>', '<', '>=', '<=',
+    '=', '+=', '-=', '*=', '/=',
+    '&&', '||', '!',
+    '&', '|', '^', '~',
+    '<<', '>>'
+}
+
+# Regex pattern to extract operators (including invalid ones)
+OPERATOR_PATTERN = r'[\+\-\*/%=&|<>!^~]+'
+
+def analyze_operators(file_path):
+    try:
+        with open(file_path, 'r') as file:
+            code = file.read()
+
+        # Extract possible operators
+        found_ops = re.findall(OPERATOR_PATTERN, code)
+
+        valid = set()
+        invalid = set()
+
+        for op in found_ops:
+            # Break compound sequences into possible tokens
+            i = 0
+            while i < len(op):
+                # Check 2-character operators first
+                if i + 1 < len(op) and op[i:i+2] in VALID_OPERATORS:
+                    valid.add(op[i:i+2])
+                    i += 2
+                elif op[i] in VALID_OPERATORS:
+                    valid.add(op[i])
+                    i += 1
+                else:
+                    invalid.add(op[i])
+                    i += 1
+
+        return valid, invalid
+
+    except FileNotFoundError:
+        print("Error: File not found.")
+        return set(), set()
+
+
+# ---- MAIN ----
+if __name__ == "__main__":
+    file_name = input("Enter source code file name: ")
+    
+    valid_ops, invalid_ops = analyze_operators(file_name)
+
+    print("\nValid Operators Found:")
+    for op in sorted(valid_ops):
+        print(op)
+
+    print("\nInvalid Operators Found:")
+    for op in sorted(invalid_ops):
+        print(op if op.strip() else "(unknown)")
