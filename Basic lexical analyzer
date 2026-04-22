@@ -1,0 +1,26 @@
+import keyword
+import re
+
+def lexical_analysis(filename):
+    # Read entire file content
+    with open(filename, 'r') as f:
+        code = f.read()
+
+    # Split code into tokens (words + operators)
+    tokens = re.findall(r'\b\w+\b|[+\-*/%=<>(),]', code)
+
+    # Classify each token
+    for token in tokens:
+        if keyword.iskeyword(token):
+            print(token, "-> Keyword")  # Python keyword
+        elif token.isidentifier():
+            print(token, "-> Identifier")  # Variable name
+        elif token.isnumeric():
+            print(token, "-> Literal")  # Number
+        elif token in "+-*/%=<>":
+            print(token, "-> Operator")  # Operator
+        else:
+            print(token, "-> Delimiter")  # Special symbol
+
+# Function call
+lexical_analysis("program.py")
