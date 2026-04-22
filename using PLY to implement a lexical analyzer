@@ -1,0 +1,144 @@
+pip install ply
+import ply.lex as lex
+
+# -------------------------------
+# 1. LIST OF TOKEN NAMES
+# -------------------------------
+tokens = (
+    'IDENTIFIER',
+    'NUMBER',
+    'PLUS',
+    'MINUS',
+    'MULTIPLY',
+    'DIVIDE',
+    'ASSIGN'
+)
+
+# -------------------------------
+# 2. OPERATORS (Regex rules)
+# -------------------------------
+t_PLUS = r'\+'
+t_MINUS = r'-'
+t_MULTIPLY = r'\*'
+t_DIVIDE = r'/'
+t_ASSIGN = r'='
+
+# -------------------------------
+# 3. IGNORE WHITESPACE & TABS
+# -------------------------------
+t_ignore = ' \t'
+
+# -------------------------------
+# 4. IGNORE COMMENTS
+# -------------------------------
+
+# Single-line comment (// ...)
+def t_single_comment(t):
+    r'//.*'
+    pass   # Ignore
+
+# Multi-line comment (/* ... */)
+def t_multi_comment(t):
+    r'/\*[\s\S]*?\*/'
+    pass   # Ignore
+
+# -------------------------------
+# 5. IDENTIFIER RULE
+# -------------------------------
+def t_IDENTIFIER(t):
+    r'[a-zA-Z][a-zA-Z0-9]*'
+    
+    # Restrict length to 10
+    if len(t.value) > 10:
+        print(f"Error: Identifier '{t.value}' exceeds 10 characters at line {t.lineno}")
+    
+    return t
+
+# -------------------------------
+# 6. NUMBER RULE (int + float)
+# -------------------------------
+def t_NUMBER(t):
+    r'\d+(\.\d+)?'
+    
+    if '.' in t.value:
+        t.value = float(t.value)
+    else:
+        t.value = int(t.value)
+    
+    return t
+
+# -------------------------------
+# 7. TRACK LINE NUMBERS
+# -------------------------------
+def t_newline(t):
+    r'\n+'
+    t.lexer.lineno += len(t.value)
+
+# -------------------------------
+# 8. ERROR HANDLING
+# -------------------------------
+def t_error(t):
+    col = find_column(t)
+    print(f"Illegal character '{t.value[0]}' at line {t.lineno}, column {col}")
+    
+    t.lexer.skip(1)   # Skip invalid character
+
+# Function to find column number
+def find_column(token):
+    last_cr = token.lexer.lexdata.rfind('\n', 0, token.lexpos)
+    if last_cr < 0:
+        last_cr = -1
+    return token.lexpos - last_cr
+
+# -------------------------------
+# BUILD LEXER
+# -------------------------------
+lexer = lex.lex()
+
+# -------------------------------
+# 9. FILE HANDLING FOR TOKENS
+# -------------------------------
+keywords_file = open("keywords.txt", "w")
+identifiers_file = open("identifiers.txt", "w")
+operators_file = open("operators.txt", "w")
+numbers_file = open("numbers.txt", "w")
+
+# -------------------------------
+# 10. INPUT SOURCE CODE
+# -------------------------------
+data = '''
+int a = 10;
+float number123 = 20.5;
+longidentifiername = 100; // too long
+/* multi-line
+   comment */
+b = a + number123 * 2;
+'''
+
+lexer.input(data)
+
+# -------------------------------
+# 11. TOKEN PROCESSING
+# -------------------------------
+while True:
+    tok = lexer.token()
+    if not tok:
+        break
+    
+    # Store tokens in files
+    if tok.type == 'IDENTIFIER':
+        identifiers_file.write(str(tok.value) + "\n")
+    
+    elif tok.type == 'NUMBER':
+        numbers_file.write(str(tok.value) + "\n")
+    
+    elif tok.type in ['PLUS', 'MINUS', 'MULTIPLY', 'DIVIDE', 'ASSIGN']:
+        operators_file.write(str(tok.value) + "\n")
+
+# Close files
+keywords_file.close()
+identifiers_file.close()
+operators_file.close()
+numbers_file.close()
+
+print("Lexical Analysis Completed!")
