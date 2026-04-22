@@ -1,0 +1,14 @@
+def delete_lines(filename, remove_lines):
+    # Read all lines
+    with open(filename, 'r') as f:
+        lines = f.readlines()
+
+    # Rewrite file without specified lines
+    with open(filename, 'w') as f:
+        for i, line in enumerate(lines, start=1):  # Line number starts from 1
+            if i not in remove_lines:  # Skip lines to be deleted
+                f.write(line)
+
+# Function call
+delete_lines("input.txt", [3, 6])
+print("Specified lines removed successfully.")
