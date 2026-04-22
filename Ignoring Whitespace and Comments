@@ -1,0 +1,50 @@
+from lark import Lark
+
+grammar = r"""
+start: IDENTIFIER "=" NUMBER ";"
+
+IDENTIFIER: /[a-zA-Z_][a-zA-Z0-9_]*/
+NUMBER: /\d+/
+
+%ignore WS
+%ignore /\/\/.*/
+%ignore /\/\*[\s\S]*?\*\//
+
+WS: /[ \t\n]+/
+"""
+
+parser = Lark(grammar)
+
+data = """
+// comment
+x = 10;
+/* multi comment */
+y = 20;
+"""
+
+print(parser.parse(data))
+
+
+
+
+
+
+
+
+import re
+
+data = """
+// comment
+x = 10;
+/* multi comment */
+y = 20;
+"""
+
+# remove comments
+data = re.sub(r"//.*", "", data)
+data = re.sub(r"/\*[\s\S]*?\*/", "", data)
+
+# remove whitespace
+tokens = re.findall(r"[a-zA-Z_]\w*|\d+|=", data)
+
+print(tokens)
