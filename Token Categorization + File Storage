@@ -1,0 +1,63 @@
+from lark import Lark, Token
+from collections import Counter
+
+grammar = r"""
+start: WORD+
+WORD: IDENTIFIER | NUMBER | OPERATOR | KEYWORD
+
+IDENTIFIER: /[a-zA-Z_]\w*/
+NUMBER: /\d+/
+OPERATOR: "+" | "-" | "*" | "/" | "="
+KEYWORD: "int" | "return"
+
+%ignore WS
+WS: /[ \t\n]+/
+"""
+
+parser = Lark(grammar)
+
+data = "int x = 10 x = x + 5 return x"
+tree = parser.parse(data)
+
+ids, nums, ops, keys = [], [], [], []
+
+for token in tree.scan_values(lambda v: isinstance(v, Token)):
+    if token.type == "IDENTIFIER":
+        ids.append(token.value)
+    elif token.type == "NUMBER":
+        nums.append(token.value)
+    elif token.type == "OPERATOR":
+        ops.append(token.value)
+    elif token.type == "KEYWORD":
+        keys.append(token.value)
+
+open("identifiers.txt", "w").write("\n".join(ids))
+open("numbers.txt", "w").write("\n".join(nums))
+open("operators.txt", "w").write("\n".join(ops))
+open("keywords.txt", "w").write("\n".join(keys))
+
+print(Counter(ids))
+
+
+
+
+
+
+
+
+import re
+from collections import Counter
+
+data = "int x = 10 x = x + 5 return x"
+
+ids = re.findall(r"\b[a-zA-Z_]\w*\b", data)
+nums = re.findall(r"\b\d+\b", data)
+ops = re.findall(r"[+\-*/=]", data)
+keys = re.findall(r"\b(int|return)\b", data)
+
+open("identifiers.txt", "w").write("\n".join(ids))
+open("numbers.txt", "w").write("\n".join(nums))
+open("operators.txt", "w").write("\n".join(ops))
+open("keywords.txt", "w").write("\n".join(keys))
+
+print("Identifier Frequency:", Counter(ids))
