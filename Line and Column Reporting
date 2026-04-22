@@ -1,0 +1,34 @@
+from lark import Lark, Token
+
+grammar = r"""
+start: WORD+
+WORD: /[a-zA-Z_]+/
+
+%ignore WS
+WS: /[ \t\n]+/
+"""
+
+parser = Lark(grammar, propagate_positions=True)
+
+data = "hello world\ncompiler lab"
+tree = parser.parse(data)
+
+for token in tree.scan_values(lambda v: isinstance(v, Token)):
+    print(token.type, token.value, token.line, token.column)
+
+
+
+
+
+
+
+data = "hello world\ncompiler lab"
+
+lines = data.split("\n")
+
+for i, line in enumerate(lines, start=1):
+    words = line.split()
+    col = 1
+    for word in words:
+        print("WORD:", word, "Line:", i, "Column:", col)
+        col += len(word) + 1
