@@ -1,0 +1,11 @@
+def copy_clean(src, dest):
+    # Open source and destination files
+    with open(src, 'r') as s, open(dest, 'w') as d:
+        for line in s:
+            # Check if line does NOT start with '#'
+            if not line.strip().startswith("#"):
+                d.write(line)  # Write only non-comment lines
+
+# Function call
+copy_clean("source.txt", "destination.txt")
+print("File copied after removing comments.")
