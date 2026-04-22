@@ -1,0 +1,56 @@
+# Recursive Descent Parser
+
+input_string = "i+i*i$"
+index = 0
+
+def E():
+    T()
+    E_dash()
+
+def E_dash():
+    global index
+    if index < len(input_string) and input_string[index] == '+':
+        index += 1
+        T()
+        E_dash()
+
+def T():
+    F()
+    T_dash()
+
+def T_dash():
+    global index
+    if index < len(input_string) and input_string[index] == '*':
+        index += 1
+        F()
+        T_dash()
+
+def F():
+    global index
+
+    if index < len(input_string) and input_string[index] == 'i':
+        index += 1
+
+    elif index < len(input_string) and input_string[index] == '(':
+        index += 1
+        E()
+
+        if index < len(input_string) and input_string[index] == ')':
+            index += 1
+        else:
+            error()
+
+    else:
+        error()
+
+def error():
+    print("String Rejected")
+    exit()
+
+# Start Parsing
+E()
+
+if index < len(input_string) and input_string[index] == '$':
+    print("String Accepted")
+else:
+    print("String Rejected")
