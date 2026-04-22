@@ -1,0 +1,26 @@
+def student_data():
+    n = int(input("Enter number of students: "))  # Number of students
+    records = []  # List to store student data
+
+    # Take input
+    for _ in range(n):
+        roll = input("Roll No: ")
+        name = input("Name: ")
+        marks = float(input("Marks: "))
+        records.append((roll, name, marks))  # Store as tuple
+
+    # Write data to file
+    with open("students.txt", "w") as f:
+        for r in records:
+            f.write(f"{r[0]} {r[1]} {r[2]}\n")
+
+    # Extract marks only
+    marks_list = [r[2] for r in records]
+
+    # Calculate statistics
+    print("Average Marks:", sum(marks_list) / n)
+    print("Highest Marks:", max(marks_list))
+    print("Lowest Marks:", min(marks_list))
+
+# Function call
+student_data()
