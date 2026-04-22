@@ -1,0 +1,29 @@
+import re
+
+def check_patterns(s):
+    # Define patterns
+    pattern1 = r'^a*$'      # a*
+    pattern2 = r'^a*b+$'    # a*b+
+    pattern3 = r'^abb$'     # abb
+
+    matches = []
+
+    # Check each pattern
+    if re.fullmatch(pattern1, s):
+        matches.append("a*")
+
+    if re.fullmatch(pattern2, s):
+        matches.append("a*b+")
+
+    if re.fullmatch(pattern3, s):
+        matches.append("abb")
+
+    # Display results
+    if matches:
+        print(f"'{s}' matches pattern(s): {', '.join(matches)}")
+    else:
+        print(f"'{s}' does not match any pattern")
+
+# Taking input from user
+user_input = input("Enter a string: ")
+check_patterns(user_input)
