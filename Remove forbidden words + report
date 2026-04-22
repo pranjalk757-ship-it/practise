@@ -1,0 +1,29 @@
+from collections import Counter
+
+def sanitize(source, drop, report):
+    # Read forbidden words
+    with open(drop, 'r') as f:
+        forbidden = f.read().split()
+
+    # Read source file words
+    with open(source, 'r') as f:
+        words = f.read().split()
+
+    # Count frequency of all words
+    count = Counter(words)
+
+    # Remove forbidden words
+    filtered = [w for w in words if w not in forbidden]
+
+    # Write cleaned content back to source file
+    with open(source, 'w') as f:
+        f.write(" ".join(filtered))
+
+    # Generate report file
+    with open(report, 'w') as f:
+        for word in forbidden:
+            f.write(f"{word} : {count[word]} times\n")
+
+# Function call
+sanitize("source.txt", "drop.txt", "report.txt")
+print("Forbidden words removed and report generated.")
