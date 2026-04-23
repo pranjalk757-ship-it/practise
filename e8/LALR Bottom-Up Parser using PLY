@@ -80,3 +80,9 @@ while True:
         print("Result:", result)
     except EOFError:
         break
+
+
+
+input
+
+2+3*4+5
